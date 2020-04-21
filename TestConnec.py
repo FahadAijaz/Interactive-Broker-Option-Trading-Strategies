@@ -28,11 +28,11 @@ class TestApp(EWrapper, EClient):
         result = pd.merge(self.market_data_master,historical_data, how='left', on= 'con_id')
         print(result)
 
-        # print("Data: ", reqId, bar)
+
+
 
     def scannerData(self, reqId, rank, contractDetails, distance, benchmark, projection, legsStr):
         super().scannerData(reqId, rank, contractDetails, distance, benchmark, projection, legsStr)
-        # self.stocks.append(contractDetails.contract)
 
         scanner_data_dict = {'con_id': contractDetails.contract.conId, 'rank': rank, 'symbol': contractDetails.contract.symbol,
                         'sec_type': contractDetails.contract.secType, 'sec_currency': contractDetails.contract.currency,
@@ -40,15 +40,6 @@ class TestApp(EWrapper, EClient):
 
         scanner_data = pd.DataFrame([scanner_data_dict], columns=scanner_data_dict.keys())
         self.scanner_data_master = self.scanner_data_master.append(scanner_data)
-
-
-        # if self.scanner_data_master.empty:
-        #     self.scanner_data_master = pd.DataFrame([scanner_data_dict], columns=scanner_data_dict.keys())
-        # else:
-        #     scanner_data = pd.DataFrame([scanner_data_dict], columns=scanner_data_dict.keys())
-        #     self.scanner_data_master = pd.concat([self.scanner_data_master, scanner_data], axis=0)
-
-
 
         # print("ScannerData. ReqId:", reqId, "Rank:", rank, "Symbol:", contractDetails.contract.symbol,
         # "SecType:", contractDetails.contract.secType,
@@ -60,36 +51,22 @@ class TestApp(EWrapper, EClient):
         queryTime = (datetime.datetime.today()).strftime("%Y%m%d %H:%M:%S")
         self.reqHistoricalData(contractDetails.contract.conId, contract, queryTime,
                               "1 D", "1 day", "OPTION_IMPLIED_VOLATILITY", 1, 1, False, [])
-        # print()
-        # self.i += 1
-
-        # if self.scannerDataEnd(reqId):
-        #     self.print_scanner_symbols()
-        #     self.print_scanner_data_length()
-        # # print("ScannerData. ReqId:", reqId, ScanData(contractDetails.contract, rank, distance, benchmark, projection, legsStr))
-
+        
     def scannerDataEnd(self, reqId):
         print(self.scanner_data_master)
-
-    def print_scanner_data_length(self):
-        print(len(self.stocks))
-
-    def print_scanner_symbols(self):
-        print(self.stocks)
 
     def scannerParameters(self, xml):
         super().scannerParameters(xml)
         open('log/scanner.xml', 'w').write(xml)
         print("Scanner Parameters received")
 
-
-# def error_handler(msg):
-#
-#    print("Server Error: %s" % msg)
-#
-# def reply_handler(msg):
-# print("Server Response: %s, %s" % (msg.typeName, msg))
-
+    # 
+    # def error_handler(msg):
+    #     print("Server Error: %s" % msg)
+    # 
+    # def reply_handler(msg):
+    #     print("Server Response: %s, %s" % (msg.typeName, msg))
+    # 
 
 def main():
     
@@ -119,22 +96,6 @@ def main():
     # tagvalues.append(TagValue("AverageOptionVolumeAbove", "50000"))
 
     app.reqScannerSubscription(7001, scanner, [], [])
-
-    # app.print_scanner_data_length()
-    # app.reqScannerParameters()
-
-    # tagvalues = []
-    # tagvalues.append(TagValue("usdMarketCapAbove", "10000"))
-    # tagvalues.append(TagValue("optVolumeAbove", "1000"))
-    # tagvalues.append(TagValue("avgVolumeAbove", "10000"))
-    #
-    # app.reqScannerSubscription(7002, ScannerSubscriptionSamples.HotUSStkByVolume(), [], tagvalues)
-
-
-    # app.reqContractDetails(2, contract)
-    # queryTime = (datetime.datetime.today() - datetime.timedelta(days=180)).strftime("%Y%m%d %H:%M:%S")
-    # app.reqHistoricalData(11, contract, queryTime,
-    # "3 M", "1 day", "TRADES", 1, 1, False, [])
 
     app.run()
 
